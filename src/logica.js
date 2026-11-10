@@ -48,6 +48,23 @@ const RESPUESTAS = {
   resumen: { si: 1, confirmo: 1, confirmar: 1, 'confirmar pedido': 1, correcto: 1, corregir: 2, volver: 3 }
 }
 
+// Formas en que las clientas escriben las tallas.
+const TALLAS = {
+  xch: ['xch', 'xs', 'extra chica', 'extrachica'],
+  ch: ['ch', 's', 'chica', 'chico', 'chiquita', 'pequeña', 'pequena', 'small'],
+  m: ['m', 'mediana', 'mediano', 'medium'],
+  g: ['g', 'l', 'grande', 'large'],
+  xg: ['xg', 'xl', 'eg', 'extra grande', 'extragrande'],
+  xxg: ['xxg', 'xxl', '2xl'],
+  unitalla: ['unitalla', 'unica', 'talla unica']
+}
+const sinonimosTalla = (talla) => {
+  const t = norm(talla)
+  const grupo = Object.values(TALLAS).find((lista) => lista.includes(t))
+  return grupo ? grupo.filter((x) => !x.includes(' ')) : [t]
+}
+const unirTallas = (t) => t.replace(/\b(extra) (grande|chica)\b/g, '$1$2').replace(/\btalla unica\b/g, 'unitalla')
+
 function cantidadDe(t) {
   const limpio = t.replace(/\b(quiero|dame|me llevo|solo|solamente|nada mas|nomas|por favor|porfa|piezas?|pzas?)\b/g, ' ').replace(/\s+/g, ' ').trim()
   if (/^\d+$/.test(limpio)) return Number(limpio)
@@ -592,11 +609,12 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
     if (numero === null) numero = RESPUESTAS[c.paso]?.[t] ?? null
     if (numero === null && (c.paso === 'variante' || c.paso === 'producto')) {
       const p = buscarProducto(c.productoId)
-      const palabras = t.split(' ').filter((w) => !VACIAS.has(w))
+      const palabras = unirTallas(t).split(' ').filter((w) => !VACIAS.has(w))
       const indices = !p ? [] : c.paso === 'variante' ? c.opciones : p.variantes.map((_v, i) => i).filter((i) => p.variantes[i].stock > 0 || p.encargable)
       const coincidencias = !palabras.length ? [] : indices.filter((i) => {
         const v = p.variantes[i]
-        const valores = [...norm(v.talla || '').split(' '), ...norm(v.color || '').split(' ').map(raiz)].filter(Boolean)
+        const tallas = v.talla ? sinonimosTalla(v.talla) : []
+        const valores = [...tallas, ...tallas.map(raiz), ...norm(v.color || '').split(' ').map(raiz)].filter(Boolean)
         return palabras.every((w) => valores.includes(w) || valores.includes(raiz(w)))
       })
       if (coincidencias.length > 1) {
