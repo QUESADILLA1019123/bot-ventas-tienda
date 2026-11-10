@@ -638,7 +638,8 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
   const AYUDA = `🛠️ *Comandos*
 
 ⚙️ *Tu tienda*
-*ajustes* — nombre, saludo, banco, envío, redes, preguntas, categorías y dueñas
+*ajustes* — nombre, saludo, banco, envío, redes, preguntas, categorías y pagos
+*dueñas* — agrega o quita números de dueña
 
 🛍️ *Productos*
 *productos* — lista completa
@@ -1028,7 +1029,7 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
       if (!crudo || !PASOS_D[s.paso](n, crudo, t, s)) invalido('Esa opción no es válida. Responde con una de las que aparecen arriba.')
     }
 
-    return { continuar, menuAjustes, nuevoProducto, menuEdicion }
+    return { continuar, menuAjustes, menuDuenas, nuevoProducto, menuEdicion }
   }
 
   function esDuena(jid, telefono) {
@@ -1081,6 +1082,9 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
         break
       case 'ajustes': case 'configurar': case 'configuracion':
         flujo.menuAjustes()
+        break
+      case 'duenas': case 'duena': case 'duenos': case 'dueno':
+        flujo.menuDuenas()
         break
       case 'agregar': case 'nuevo':
         flujo.nuevoProducto()
@@ -1317,7 +1321,8 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
         break
       }
       default:
-        responder('No conozco ese comando. Escribe *ayuda* para ver la lista.')
+        if (/^\d+$/.test(cmd)) responder('Ese número no corresponde a ningún menú abierto. Escribe *ajustes* y después el número de la opción.')
+        else responder('No conozco ese comando. Escribe *ayuda* para ver la lista.')
     }
     return fin()
   }

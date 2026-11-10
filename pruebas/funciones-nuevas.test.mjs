@@ -126,3 +126,15 @@ assert.match(r, /…y \d+ más antiguos/)
 assert.ok(r.length < 6000)
 
 console.log('FUNCIONES NUEVAS OK')
+
+// Atajo de dueñas y número suelto
+const D2 = crearTienda({ config: leer('./ejemplo-config.json'), catalogo: [] })
+D2.activarDuena('yo@lid', '5215500000000')
+const d2 = (x) => D2.mensajeDuena(x, 'yo@lid').map((a) => a.texto).join('\n')
+assert.match(d2('8'), /Escribe \*ajustes\*/)
+assert.match(d2('Dueñas'), /Agregar número/)
+d2('2')
+d2('52 833 123 4567')
+assert.equal(D2.config.duenas.length, 2)
+assert.ok(D2.esDuena('otra@lid', '5218331234567'), 'reconoce con 52 o 521')
+console.log('ATAJO DUEÑAS OK')
