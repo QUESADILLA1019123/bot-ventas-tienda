@@ -343,7 +343,7 @@ async function iniciarBot() {
       if (sockActual !== sock) return
       const codigo = lastDisconnect?.error?.output?.statusCode
       if (codigo === DisconnectReason.loggedOut) {
-        log('⚠️ WhatsApp cerró la sesión del bot. Hay que vincularlo de nuevo.')
+        log(`⚠️ WhatsApp cerró la sesión del bot (motivo: ${lastDisconnect?.error?.message || codigo}). Hay que vincularlo de nuevo.`)
         fs.rmSync(DIR_SESION, { recursive: true, force: true })
         numeroBot = String(process.env.NUMERO_BOT || config.numeroBot || '').replace(/\D/g, '')
         intentos = 0
@@ -352,7 +352,8 @@ async function iniciarBot() {
       if (!vinculando) intentos++
       const espera = codigo === DisconnectReason.restartRequired || vinculando ? 1500 : Math.min(60_000, 2000 * 2 ** Math.min(intentos, 5))
       if (vinculando && codigo !== DisconnectReason.restartRequired) {
-        log(numeroValido(numeroBot) ? 'El código venció. Te doy uno nuevo...' : 'Sigo esperando el número del bot.')
+        const motivo = `${codigo ?? 'sin código'}${lastDisconnect?.error?.message ? ` · ${lastDisconnect.error.message}` : ''}`
+        log(numeroValido(numeroBot) ? `Se cerró la conexión antes de vincular (motivo: ${motivo}). Te doy un código nuevo...` : 'Sigo esperando el número del bot.')
       }
       if (!vinculando || codigo === DisconnectReason.restartRequired) log(`Conexión perdida (${codigo ?? 'sin código'}). Reconectando en ${Math.round(espera / 1000)} s...`)
       setTimeout(() => iniciarBot().catch((error) => log('Error al reconectar:', error.message)), espera)
