@@ -257,7 +257,10 @@ async function atender(sock, msg) {
   if (Number(msg.messageTimestamp) < Date.now() / 1000 - VENTANA_MENSAJES_S) return
 
   const { texto, media } = leerMensaje(msg)
-  if (!texto && !media) return
+  if (!texto && !media) {
+    if (!msg.message || msg.messageStubType) log('📩 Llegó un mensaje que todavía no puedo leer (cifrado). WhatsApp lo reenviará en unos segundos; si no, que lo manden otra vez.')
+    return
+  }
 
   const telefono = await telefonoDe(sock, msg)
   if (tienda.esDuena(jid, telefono)) return atenderDuena(sock, msg, jid, texto, media)
@@ -269,6 +272,8 @@ async function atender(sock, msg) {
     if (clave.length === claveDuena.length && crypto.timingSafeEqual(Buffer.from(clave), Buffer.from(claveDuena))) {
       log('👑 Dueña activada')
       await ejecutar(sock, tienda.activarDuena(jid, telefono), msg, null)
+    } else {
+      log(`📩 Mensaje recibido, pero no es la clave de dueña (${texto.trim().slice(0, 20) || 'archivo'}). La clave es: ${claveDuena}`)
     }
     return
   }
@@ -365,7 +370,8 @@ async function iniciarBot() {
     for (const msg of messages) {
       const id = msg.key?.id
       if (!id || vistos.has(id)) continue
-      vistos.add(id)
+      // Un mensaje que llegó cifrado vuelve con el mismo id cuando ya se puede leer: no se marca como visto.
+      if (msg.message && !msg.messageStubType) vistos.add(id)
       if (vistos.size > 3000) vistos.delete(vistos.values().next().value)
       enCola(msg.key.remoteJid, () => atender(sock, msg))
     }
