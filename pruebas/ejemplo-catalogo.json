@@ -1,0 +1,47 @@
+[
+  {
+    "id": "R01", "categoria": "Ropa", "nombre": "Blusa satinada", "descripcion": "Manga larga, caída suave.",
+    "precio": 289, "encargable": true,
+    "variantes": [
+      { "talla": "CH", "color": "Negro", "stock": 3 },
+      { "talla": "M", "color": "Negro", "stock": 2 },
+      { "talla": "G", "color": "Negro", "stock": 0 },
+      { "talla": "M", "color": "Rojo", "stock": 1 }
+    ]
+  },
+  {
+    "id": "R02", "categoria": "Ropa", "nombre": "Vestido floral", "descripcion": "Largo midi con botones al frente.",
+    "precio": 450, "encargable": true,
+    "variantes": [
+      { "talla": "CH", "color": "Azul", "stock": 2 },
+      { "talla": "M", "color": "Azul", "stock": 0 }
+    ]
+  },
+  {
+    "id": "M01", "categoria": "Maquillaje", "nombre": "Labial mate", "descripcion": "Larga duración.",
+    "precio": 129, "encargable": false,
+    "variantes": [
+      { "color": "Rojo", "stock": 6 },
+      { "color": "Nude", "stock": 4 },
+      { "color": "Vino", "stock": 0 }
+    ]
+  },
+  {
+    "id": "M02", "categoria": "Maquillaje", "nombre": "Paleta de sombras", "descripcion": "12 tonos.",
+    "precio": 249, "encargable": true,
+    "variantes": [{ "stock": 5 }]
+  },
+  {
+    "id": "A01", "categoria": "Accesorios", "nombre": "Aretes dorados", "descripcion": "Acero inoxidable.",
+    "precio": 99, "encargable": false,
+    "variantes": [{ "stock": 8 }]
+  },
+  {
+    "id": "A02", "categoria": "Accesorios", "nombre": "Bolsa de mano", "descripcion": "Con correa ajustable.",
+    "precio": 380, "encargable": true,
+    "variantes": [
+      { "color": "Beige", "stock": 1 },
+      { "color": "Negro", "stock": 2 }
+    ]
+  }
+]

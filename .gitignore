@@ -1,0 +1,10 @@
+# Datos privados del bot: nunca se suben a GitHub
+sesion/
+datos/
+comprobantes/
+.env
+
+# Generados al instalar
+node_modules/
+package-lock.json
+npm-debug.log*

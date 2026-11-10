@@ -1,0 +1,83 @@
+{
+  "tienda": "Mi Tienda",
+  "bienvenida": "",
+  "duenas": [],
+  "zonaHoraria": "America/Mexico_City",
+  "costoEnvio": 0,
+  "horasAtencion": 12,
+  "fallosParaPasar": 2,
+  "pago": {
+    "banco": "",
+    "titular": "",
+    "clabe": ""
+  },
+  "redes": [],
+  "faq": [
+    {
+      "pregunta": "Envíos",
+      "claves": [
+        "envio",
+        "enviar",
+        "envian",
+        "domicilio",
+        "zona",
+        "zonas",
+        "entregan"
+      ],
+      "respuesta": "🛵 *Envíos*\nEntregamos personalmente a domicilio. Después de confirmar tu pago, coordinamos contigo el día y la hora."
+    },
+    {
+      "pregunta": "Tiempos de entrega",
+      "claves": [
+        "tiempo",
+        "tiempos",
+        "tardan",
+        "demora",
+        "cuando llega",
+        "cuantos dias",
+        "cuanto tarda",
+        "en cuanto tiempo"
+      ],
+      "respuesta": ""
+    },
+    {
+      "pregunta": "Cambios",
+      "claves": [
+        "cambio",
+        "cambios",
+        "cambiar",
+        "cambiarlo",
+        "cambiarla"
+      ],
+      "respuesta": ""
+    },
+    {
+      "pregunta": "Devoluciones",
+      "claves": [
+        "devolucion",
+        "devoluciones",
+        "devolver",
+        "reembolso",
+        "regresar",
+        "devolverlo",
+        "devolverla"
+      ],
+      "respuesta": ""
+    },
+    {
+      "pregunta": "Métodos de pago",
+      "claves": [
+        "metodo de pago",
+        "metodos de pago",
+        "formas de pago",
+        "como pago",
+        "aceptan",
+        "tarjeta",
+        "efectivo",
+        "contra entrega",
+        "pago contra entrega"
+      ],
+      "respuesta": "💳 *Métodos de pago*\nPor ahora aceptamos transferencia bancaria. Al confirmar tu pedido te doy los datos, y me envías aquí tu comprobante."
+    }
+  ]
+}

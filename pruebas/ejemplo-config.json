@@ -1,0 +1,95 @@
+{
+  "tienda": "Mi Tienda",
+  "duenas": [],
+  "zonaHoraria": "America/Mexico_City",
+  "costoEnvio": 0,
+  "horasAtencion": 12,
+  "fallosParaPasar": 2,
+  "pago": {
+    "banco": "BANCO DE EJEMPLO",
+    "titular": "TITULAR DE EJEMPLO",
+    "clabe": "000000000000000000"
+  },
+  "redes": [
+    {
+      "nombre": "Instagram",
+      "url": "https://instagram.com/TU_USUARIO"
+    },
+    {
+      "nombre": "Facebook",
+      "url": "https://facebook.com/TU_PAGINA"
+    },
+    {
+      "nombre": "TikTok",
+      "url": "https://tiktok.com/@TU_USUARIO"
+    }
+  ],
+  "faq": [
+    {
+      "pregunta": "Envíos",
+      "claves": [
+        "envio",
+        "enviar",
+        "envian",
+        "domicilio",
+        "zona",
+        "zonas",
+        "entregan"
+      ],
+      "respuesta": "🛵 *Envíos*\nEntregamos personalmente a domicilio. Después de confirmar tu pago, coordinamos contigo el día y la hora. (Escribe aquí tus zonas y costos.)"
+    },
+    {
+      "pregunta": "Tiempos de entrega",
+      "claves": [
+        "tiempo",
+        "tiempos",
+        "tardan",
+        "demora",
+        "cuando llega",
+        "cuantos dias",
+        "cuanto tarda",
+        "en cuanto tiempo"
+      ],
+      "respuesta": "⏱️ *Tiempos de entrega*\nEscribe aquí tus tiempos reales. Ejemplo: productos en existencia, de 1 a 3 días; encargos, de 7 a 15 días."
+    },
+    {
+      "pregunta": "Cambios",
+      "claves": [
+        "cambio",
+        "cambios",
+        "cambiar",
+        "cambiarlo",
+        "cambiarla"
+      ],
+      "respuesta": "🔄 *Cambios*\nEscribe aquí tu política. Ejemplo: cambios dentro de 3 días, con la prenda sin usar y con etiqueta."
+    },
+    {
+      "pregunta": "Devoluciones",
+      "claves": [
+        "devolucion",
+        "devoluciones",
+        "devolver",
+        "reembolso",
+        "regresar",
+        "devolverlo",
+        "devolverla"
+      ],
+      "respuesta": "↩️ *Devoluciones*\nEscribe aquí tu política. Ejemplo: solo por defecto de fábrica, reportado dentro de las primeras 24 horas."
+    },
+    {
+      "pregunta": "Métodos de pago",
+      "claves": [
+        "metodo de pago",
+        "metodos de pago",
+        "formas de pago",
+        "como pago",
+        "aceptan",
+        "tarjeta",
+        "efectivo",
+        "contra entrega",
+        "pago contra entrega"
+      ],
+      "respuesta": "💳 *Métodos de pago*\nPor ahora aceptamos transferencia bancaria. Al confirmar tu pedido te doy los datos, y me envías aquí tu comprobante."
+    }
+  ]
+}
