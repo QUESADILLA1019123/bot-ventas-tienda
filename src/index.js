@@ -279,15 +279,30 @@ async function atender(sock, msg) {
 }
 
 // ===== Vinculación =====
+const numeroValido = (n) => n.length >= 10 && n.length <= 15
 let numeroBot = String(process.env.NUMERO_BOT || config.numeroBot || '').replace(/\D/g, '')
-async function pedirNumero() {
-  while (numeroBot.length < 10 || numeroBot.length > 15) {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
-    numeroBot = (await rl.question('Número del bot con código de país, sin + ni espacios (México: 521 + 10 dígitos): ')).replace(/\D/g, '')
-    rl.close()
-    if (numeroBot.length < 10 || numeroBot.length > 15) log('Ese número no parece correcto. Intenta otra vez.')
-  }
-  return numeroBot
+let promesaNumero = null
+
+// Una sola pregunta para todo el proceso, aunque la conexión se reinicie mientras esperas.
+function obtenerNumero() {
+  if (numeroValido(numeroBot)) return Promise.resolve(numeroBot)
+  promesaNumero ||= (async () => {
+    const rl = readline.createInterface({ input: process.stdin, terminal: false })
+    try {
+      while (!numeroValido(numeroBot)) {
+        console.log('\n👉 Escribe el número del bot con código de país, sin + ni espacios (México: 521 + 10 dígitos), y envíalo:')
+        const linea = await new Promise((resolve) => rl.once('line', resolve))
+        numeroBot = String(linea).replace(/\D/g, '')
+        if (!numeroValido(numeroBot)) log('Ese número no parece correcto. Intenta otra vez.')
+      }
+      log(`Número recibido: ${numeroBot}. Pidiendo código...`)
+      return numeroBot
+    } finally {
+      rl.close()
+      promesaNumero = null
+    }
+  })()
+  return promesaNumero
 }
 
 let intentos = 0
@@ -309,8 +324,11 @@ async function iniciarBot() {
     if (qr && !codigoPedido && !sock.authState.creds.registered) {
       codigoPedido = true
       try {
-        const codigo = await sock.requestPairingCode(await pedirNumero())
-        log(`\n\n   CÓDIGO PARA VINCULAR: ${codigo}\n\n   En el celular del bot: WhatsApp > Dispositivos vinculados > Vincular con número de teléfono\n`)
+        const numero = await obtenerNumero()
+        // Si mientras escribías se reinició la conexión, el código lo pide la conexión nueva.
+        if (sockActual !== sock || sock.cerrado) return
+        const codigo = await sock.requestPairingCode(numero)
+        log(`\n\n   CÓDIGO PARA VINCULAR: ${codigo}\n\n   En el celular del bot: WhatsApp > Dispositivos vinculados > Vincular con número de teléfono\n   Tienes unos 2 minutos. Si se vence, aquí aparece uno nuevo.\n`)
       } catch (error) {
         log('No se pudo pedir el código:', error.message)
       }
@@ -321,16 +339,22 @@ async function iniciarBot() {
       if (!tienda.hayDuenas()) log(`\n\n   CLAVE DE DUEÑA: ${claveDuena}\n   Envíasela al bot desde tu WhatsApp personal para activar tu número.\n`)
     }
     if (connection === 'close') {
+      sock.cerrado = true
       if (sockActual !== sock) return
       const codigo = lastDisconnect?.error?.output?.statusCode
       if (codigo === DisconnectReason.loggedOut) {
         log('⚠️ WhatsApp cerró la sesión del bot. Hay que vincularlo de nuevo.')
         fs.rmSync(DIR_SESION, { recursive: true, force: true })
         numeroBot = String(process.env.NUMERO_BOT || config.numeroBot || '').replace(/\D/g, '')
+        intentos = 0
       }
-      intentos++
-      const espera = codigo === DisconnectReason.restartRequired ? 1000 : Math.min(60_000, 2000 * 2 ** Math.min(intentos, 5))
-      log(`Conexión perdida (${codigo ?? 'sin código'}). Reconectando en ${Math.round(espera / 1000)} s...`)
+      const vinculando = !sock.authState.creds.registered
+      if (!vinculando) intentos++
+      const espera = codigo === DisconnectReason.restartRequired || vinculando ? 1500 : Math.min(60_000, 2000 * 2 ** Math.min(intentos, 5))
+      if (vinculando && codigo !== DisconnectReason.restartRequired) {
+        log(numeroValido(numeroBot) ? 'El código venció. Te doy uno nuevo...' : 'Sigo esperando el número del bot.')
+      }
+      if (!vinculando || codigo === DisconnectReason.restartRequired) log(`Conexión perdida (${codigo ?? 'sin código'}). Reconectando en ${Math.round(espera / 1000)} s...`)
       setTimeout(() => iniciarBot().catch((error) => log('Error al reconectar:', error.message)), espera)
     }
   })
