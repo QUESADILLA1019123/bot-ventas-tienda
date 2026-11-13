@@ -95,7 +95,8 @@ const opcion = (n, t) => `*${n}.* ${t}`
 const PIE_MENU = opcion(0, 'Menú principal')
 
 export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, ahora = () => Date.now(), version = '' }) {
-  const db = Object.assign({ pedidos: [], casos: [], clientes: {}, asistentes: {}, sigPedido: 1, sigCaso: 1 }, datos)
+  const db = Object.assign({ pedidos: [], casos: [], clientes: {}, asistentes: {}, modoClienta: {}, sigPedido: 1, sigCaso: 1 }, datos)
+  db.modoClienta ||= {}
   config.duenas ||= []
   config.redes ||= []
   config.faq ||= []
@@ -638,6 +639,7 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
   const AYUDA = `🛠️ *Comandos*
 
 ⚙️ *Tu tienda*
+*probar* — te atiende como clienta para que pruebes el bot
 *ajustes* — nombre, saludo, banco, envío, redes, preguntas, categorías y pagos
 *dueñas* — agrega o quita números de dueña
 
@@ -1032,6 +1034,13 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
     return { continuar, menuAjustes, menuDuenas, nuevoProducto, menuEdicion }
   }
 
+  const enModoClienta = (jid) => !!db.modoClienta[jid]
+  function salirModoClienta(jid) {
+    delete db.modoClienta[jid]
+    guardar()
+    return [{ tipo: 'duena', a: jid, texto: `👑 *Modo dueña.* Ya puedes usar tus comandos.\n\n${textoPendientes()}\n\nEscribe *ayuda* para verlos.` }]
+  }
+
   function esDuena(jid, telefono) {
     const d = config.duenas.find((x) => x.jid === jid || mismoTel(x.telefono, telefono))
     if (d && jid && d.jid !== jid) { d.jid = jid; guardar() }
@@ -1077,9 +1086,16 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
     const confirmado = (p) => responder(`Pedido *#${p.id}* → ${ESTADOS[p.estado].icono} *${ESTADOS[p.estado].nombre}*${p.clienteId ? '. Ya le avisé a la clienta.' : '. Este pedido no tiene número para avisar.'}`)
 
     switch (cmd) {
-      case 'ayuda': case 'comandos': case 'menu':
+      case 'ayuda': case 'comandos': case 'menu': case 'hola': case 'buenas': case 'inicio':
         responder(AYUDA)
         break
+      case 'probar': case 'clienta': case 'cliente': {
+        db.modoClienta[remitente] = true
+        delete db.asistentes[remitente]
+        if (db.clientes[remitente]) { db.clientes[remitente].paso = 'nuevo'; db.clientes[remitente].ficha = [] }
+        responder('🛍️ *Modo clienta activado.* Ahora el bot te atiende como a una clienta, para que lo pruebes.\n\nTe siguen llegando los avisos de dueña. Para volver a tus comandos escribe *modo dueña*.')
+        break
+      }
       case 'ajustes': case 'configurar': case 'configuracion':
         flujo.menuAjustes()
         break
@@ -1363,5 +1379,5 @@ export function crearTienda({ config, catalogo, datos = {}, guardar = () => {}, 
     return [{ tipo: 'duena', texto: `📷 Foto guardada para *${p.nombre}* (${p.id}). Las clientas la verán al abrir el producto.` }]
   }
 
-  return { mensajeCliente, mensajeDuena, revisarPendientes, productoParaFoto, ponerFoto, esDuena, hayDuenas, destinosDuena, activarDuena, db, catalogo, config }
+  return { mensajeCliente, mensajeDuena, enModoClienta, salirModoClienta, revisarPendientes, productoParaFoto, ponerFoto, esDuena, hayDuenas, destinosDuena, activarDuena, db, catalogo, config }
 }

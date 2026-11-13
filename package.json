@@ -1,6 +1,6 @@
 {
   "name": "bot-ventas-whatsapp",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Asistente de ventas por WhatsApp con Baileys: catálogo, pedidos, comprobantes y seguimiento",
   "type": "module",
   "main": "src/index.js",

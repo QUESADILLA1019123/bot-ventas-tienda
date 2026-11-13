@@ -263,7 +263,10 @@ async function atender(sock, msg) {
   }
 
   const telefono = await telefonoDe(sock, msg)
-  if (tienda.esDuena(jid, telefono)) return atenderDuena(sock, msg, jid, texto, media)
+  if (tienda.esDuena(jid, telefono)) {
+    if (!tienda.enModoClienta(jid)) return atenderDuena(sock, msg, jid, texto, media)
+    if (/^\s*modo\s+due[ñn][ao]s?\s*$/i.test(texto)) return ejecutar(sock, tienda.salirModoClienta(jid))
+  }
   if (hayFlood(jid)) return
 
   // Hasta activar a la dueña, el bot solo escucha la clave que aparece en la consola.
